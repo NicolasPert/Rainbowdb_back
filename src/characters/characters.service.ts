@@ -1,19 +1,33 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCharacterDto } from './dto/create-character.dto';
 import { UpdateCharacterDto } from './dto/update-character.dto';
+import { Character } from './entities/character.entity';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class CharactersService {
-  create(createCharacterDto: CreateCharacterDto) {
-    return 'This action adds a new character';
+  constructor(
+    @InjectRepository(Character)
+    private characterRepository: Repository<Character>,
+  ) {}
+
+  async create(createCharacterDto: CreateCharacterDto) {
+    const character = this.characterRepository.create(createCharacterDto);
+    const result = await this.characterRepository.save(character);
+    return result;
   }
 
   findAll() {
     return `This action returns all characters`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} character`;
+  async findOne(id: number) {
+    const found = await this.characterRepository.findOneBy({ id });
+    if (!found) {
+      throw new NotFoundException(`Character with the id ${id} not found`);
+    }
+    return found;
   }
 
   update(id: number, updateCharacterDto: UpdateCharacterDto) {
