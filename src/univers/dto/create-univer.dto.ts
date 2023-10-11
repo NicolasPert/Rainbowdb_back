@@ -1,1 +1,3 @@
-export class CreateUniverDto {}
+export class CreateUniverDto {
+  name: string;
+}

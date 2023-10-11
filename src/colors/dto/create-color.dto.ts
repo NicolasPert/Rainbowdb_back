@@ -1,1 +1,4 @@
-export class CreateColorDto {}
+export class CreateColorDto {
+  id: number;
+  name: string;
+}

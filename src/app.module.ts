@@ -15,6 +15,7 @@ import { Color } from './colors/entities/color.entity';
 import { Movie } from './movies/entities/movie.entity';
 import { Picture } from './pictures/entities/picture.entity';
 import { Univer } from './univers/entities/univer.entity';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { Univer } from './univers/entities/univer.entity';
     ColorsModule,
     UniversModule,
     MoviesModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
