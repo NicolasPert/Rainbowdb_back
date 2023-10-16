@@ -1,9 +1,31 @@
-import { Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Characters } from 'src/characters/entities/character.entity';
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
-export class Univer {
+@Entity({ name: 'univers' })
+export class Univers {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
   name: string;
+
+  @ManyToMany(() => Characters)
+  @JoinTable({
+    name: 'belong',
+    joinColumn: {
+      name: 'id_univers',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'id_characters',
+      referencedColumnName: 'id',
+    },
+  })
+  belong: Characters[];
 }

@@ -1,7 +1,7 @@
 export class CreateCharacterDto {
   name: string;
-  movie: string;
-  univers: string;
+  id_movies: number;
+  id_univers: number;
   id_pitures: number;
   id_colors: number;
 }

@@ -21,7 +21,7 @@ export class CharactersController {
   constructor(private readonly charactersService: CharactersService) {}
 
   @Post()
-  @UseGuards(AuthGuard())
+  // @UseGuards(AuthGuard())
   create(
     @Body() createCharacterDto: CreateCharacterDto,
     @GetUser() user: User,

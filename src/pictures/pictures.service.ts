@@ -1,24 +1,60 @@
-import { Injectable } from '@nestjs/common';
-import { CreatePictureDto } from './dto/create-picture.dto';
-import { UpdatePictureDto } from './dto/update-picture.dto';
+import { Injectable, NotFoundException, StreamableFile } from '@nestjs/common';
+// import { UpdatePictureDto } from './dto/update-picture.dto';
+import { Pictures } from './entities/picture.entity';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { createReadStream } from 'fs';
+import { join } from 'path';
 
 @Injectable()
 export class PicturesService {
-  create(createPictureDto: CreatePictureDto) {
-    return 'This action adds a new picture';
+  constructor(
+    @InjectRepository(Pictures)
+    private picturesRepository: Repository<Pictures>,
+  ) {}
+  create(img: Express.Multer.File) {
+    console.log('notre img' + img.originalname);
+    return this.picturesRepository.save({
+      name: img.filename,
+      mimetype: img.mimetype,
+      size: img.size,
+      description: img.originalname,
+    });
   }
 
-  findAll() {
-    return `This action returns all pictures`;
+  async getImage(res): Promise<StreamableFile> {
+    const result = await this.picturesRepository.find();
+    console.log(result);
+    let imageFile;
+    const imageTab = [];
+    for (let i = 0; i < result.length; i++) {
+      imageFile = createReadStream(
+        join(process.cwd(), 'uploads', result[i].name),
+      );
+      res.set('Content-Type', result[i].mimetype);
+      imageTab.push(imageFile);
+    }
+    console.log(imageTab[imageFile]);
+    return new StreamableFile(imageFile);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} picture`;
+  async getImageById(id: number, res): Promise<StreamableFile> {
+    const result = await this.picturesRepository.findOneBy({ id });
+    if (!result) {
+      throw new NotFoundException(`The photo ${id}} is not found !`);
+    }
+    const imageFile = createReadStream(
+      join(process.cwd(), 'uploads', result.name),
+    );
+    res.set('Content-Type', result.mimetype);
+    console.log('mon image', imageFile);
+    return new StreamableFile(imageFile);
   }
 
-  update(id: number, updatePictureDto: UpdatePictureDto) {
+  update(id: number) {
     return `This action updates a #${id} picture`;
   }
+  // updatePictureDto: UpdatePictureDto;
 
   remove(id: number) {
     return `This action removes a #${id} picture`;

@@ -1,4 +1,11 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Characters } from 'src/characters/entities/character.entity';
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity({ name: 'users' })
 export class User {
@@ -16,4 +23,18 @@ export class User {
 
   @Column()
   admin: boolean;
+
+  @ManyToMany(() => Characters, { eager: true })
+  @JoinTable({
+    name: 'to_like',
+    joinColumn: {
+      name: 'id_users',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'id_characters',
+      referencedColumnName: 'id',
+    },
+  })
+  to_likes: Characters[];
 }

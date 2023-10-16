@@ -9,12 +9,12 @@ import { UniversModule } from './univers/univers.module';
 import { MoviesModule } from './movies/movies.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Character } from './characters/entities/character.entity';
+import { Characters } from './characters/entities/character.entity';
 import { User } from './user/entities/user.entity';
-import { Color } from './colors/entities/color.entity';
-import { Movie } from './movies/entities/movie.entity';
-import { Picture } from './pictures/entities/picture.entity';
-import { Univer } from './univers/entities/univer.entity';
+import { Colors } from './colors/entities/color.entity';
+import { Movies } from './movies/entities/movie.entity';
+import { Pictures } from './pictures/entities/picture.entity';
+import { Univers } from './univers/entities/univer.entity';
 import { AuthModule } from './auth/auth.module';
 
 @Module({
@@ -27,7 +27,7 @@ import { AuthModule } from './auth/auth.module';
       username: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DATABASE,
-      entities: [Character, Color, Movie, Picture, Univer, User],
+      entities: [Characters, Colors, Movies, Pictures, Univers, User],
       synchronize: false,
     }),
     UserModule,

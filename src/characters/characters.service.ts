@@ -1,15 +1,15 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCharacterDto } from './dto/create-character.dto';
 import { UpdateCharacterDto } from './dto/update-character.dto';
-import { Character } from './entities/character.entity';
+import { Characters } from './entities/character.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class CharactersService {
   constructor(
-    @InjectRepository(Character)
-    private characterRepository: Repository<Character>,
+    @InjectRepository(Characters)
+    private characterRepository: Repository<Characters>,
   ) {}
 
   async create(createCharacterDto: CreateCharacterDto) {
@@ -19,7 +19,7 @@ export class CharactersService {
   }
 
   findAll() {
-    return `This action returns all characters`;
+    return this.characterRepository.find();
   }
 
   async findOne(id: number) {
@@ -30,11 +30,36 @@ export class CharactersService {
     return found;
   }
 
-  update(id: number, updateCharacterDto: UpdateCharacterDto) {
-    return `This action updates a #${id} character`;
+  async update(id: number, updateCharacterDto: UpdateCharacterDto) {
+    const character = await this.findOne(id);
+    // if (updateCharacterDto.id_colors) {
+    //   character.id_colors = updateCharacterDto.id_colors;
+    // }
+
+    // if (updateCharacterDto.id_movies) {
+    //   character.id_movies = updateCharacterDto.id_movies;
+    // }
+
+    // if (updateCharacterDto.id_univers) {
+    //   character.id_univers = updateCharacterDto.id_univers;
+    // }
+
+    // if (updateCharacterDto.id_pitures) {
+    //   character.id_pictures = updateCharacterDto.id_pitures;
+    // }
+
+    const updateCharacter = this.characterRepository.merge(
+      character,
+      updateCharacterDto,
+    );
+
+    const result = await this.characterRepository.save(updateCharacter);
+    return result;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} character`;
+  async remove(id: number) {
+    const character = await this.findOne(id);
+    const response = await this.characterRepository.remove(character);
+    return response;
   }
 }

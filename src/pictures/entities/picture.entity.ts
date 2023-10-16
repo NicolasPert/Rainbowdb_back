@@ -1,6 +1,8 @@
-import { Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Characters } from 'src/characters/entities/character.entity';
+import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 
-export class Picture {
+@Entity({ name: 'pictures' })
+export class Pictures {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -15,4 +17,7 @@ export class Picture {
 
   @Column()
   mimetype: string;
+
+  @OneToOne(() => Characters, (character) => character.picture)
+  character: Characters;
 }
