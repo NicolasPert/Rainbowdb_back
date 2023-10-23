@@ -32,21 +32,6 @@ export class CharactersService {
 
   async update(id: number, updateCharacterDto: UpdateCharacterDto) {
     const character = await this.findOne(id);
-    // if (updateCharacterDto.id_colors) {
-    //   character.id_colors = updateCharacterDto.id_colors;
-    // }
-
-    // if (updateCharacterDto.id_movies) {
-    //   character.id_movies = updateCharacterDto.id_movies;
-    // }
-
-    // if (updateCharacterDto.id_univers) {
-    //   character.id_univers = updateCharacterDto.id_univers;
-    // }
-
-    // if (updateCharacterDto.id_pitures) {
-    //   character.id_pictures = updateCharacterDto.id_pitures;
-    // }
 
     const updateCharacter = this.characterRepository.merge(
       character,

@@ -24,7 +24,7 @@ export class Characters {
   @Column()
   id_pictures: number;
 
-  @ManyToMany(() => Movies, { eager: true })
+  @ManyToMany(() => Movies, (movies) => movies.name, { eager: true })
   @JoinTable({
     name: 'to_in',
     joinColumn: {
@@ -38,7 +38,7 @@ export class Characters {
   })
   to_in: Movies[];
 
-  @ManyToMany(() => Univers, { eager: true })
+  @ManyToMany(() => Univers, (univers) => univers.name, { eager: true })
   @JoinTable({
     name: 'belong',
     joinColumn: {
@@ -52,7 +52,7 @@ export class Characters {
   })
   belong: Univers[];
 
-  @ManyToMany(() => Colors, { eager: true })
+  @ManyToMany(() => Colors, (colors) => colors.name, { eager: true })
   @JoinTable({
     name: 'to_own',
     joinColumn: {

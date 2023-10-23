@@ -16,7 +16,7 @@ import { PicturesService } from './pictures.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UpdatePictureDto } from './dto/update-picture.dto';
 
-@Controller('photos')
+@Controller('pictures')
 export class PicturesController {
   constructor(private readonly picturesService: PicturesService) {}
 

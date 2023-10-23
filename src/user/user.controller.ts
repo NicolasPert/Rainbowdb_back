@@ -1,15 +1,8 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+// import { UpdateUserDto } from './dto/update-user.dto';
+import { FavorisDto } from './dto/favoris.dto';
 
 @Controller('user')
 export class UserController {
@@ -30,13 +23,23 @@ export class UserController {
     return this.userService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(+id, updateUserDto);
+  @Patch(':id/favorites')
+  updateFavorites(
+    @Param('id') id: string,
+    @Body() data: { characterId: number; action: 'add' | 'remove' },
+  ) {
+    if (data.action === 'add') {
+      //si je mets add et le characterID que je veux cela va mettre le character en favoris sur le user
+      return this.userService.update(+id, data.characterId);
+    } else if (data.action === 'remove') {
+      // si je mets remove et le characterID cela va enlever le favoris sur le user
+      return this.userService.delete(+id, data.characterId);
+    }
+    return 'Action complete'; // Réponse de confirmation
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userService.remove(+id);
-  }
+  // @Delete(':id')
+  // remove(@Param('id') id: string) {
+  //   return this.userService.remove(+id);
+  // }
 }

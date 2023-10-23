@@ -41,7 +41,7 @@ export class PicturesService {
   async getImageById(id: number, res): Promise<StreamableFile> {
     const result = await this.picturesRepository.findOneBy({ id });
     if (!result) {
-      throw new NotFoundException(`The photo ${id}} is not found !`);
+      throw new NotFoundException(`La photo ${id}} n'as pas été trouvé !`);
     }
     const imageFile = createReadStream(
       join(process.cwd(), 'uploads', result.name),
@@ -51,12 +51,21 @@ export class PicturesService {
     return new StreamableFile(imageFile);
   }
 
+  async getPicture(id: number) {
+    await this.picturesRepository.findOneBy({ id });
+  }
+
   update(id: number) {
     return `This action updates a #${id} picture`;
   }
   // updatePictureDto: UpdatePictureDto;
 
-  remove(id: number) {
-    return `This action removes a #${id} picture`;
+  async remove(id: number) {
+    const pictureToRemove = await this.picturesRepository.findOneBy({ id });
+    if (!pictureToRemove) {
+      throw new Error(`L'image avec l'id number : ${id} est inexistante `);
+    }
+    await this.picturesRepository.remove(pictureToRemove);
+    return;
   }
 }
