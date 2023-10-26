@@ -21,15 +21,15 @@ export class CharactersController {
   constructor(private readonly charactersService: CharactersService) {}
 
   @Post()
-  // @UseGuards(AuthGuard())
+  // @UseGuards(AuthGuard('jwt'))
   create(
     @Body() createCharacterDto: CreateCharacterDto,
-    @GetUser() user: User,
+    // @GetUser() user: User,
   ) {
-    if (!user.admin) {
-      throw new UnauthorizedException('Droits admin nécéssaires');
-    }
-    return this.charactersService.create(createCharacterDto);
+    this.charactersService.create(createCharacterDto);
+    // if (!user.admin) {
+    //   throw new UnauthorizedException('Droits admin nécéssaires');
+    // } else return
   }
 
   @Get()
@@ -43,7 +43,7 @@ export class CharactersController {
   }
 
   @Patch(':id')
-  @UseGuards(AuthGuard())
+  @UseGuards(AuthGuard('jwt'))
   update(
     @Param('id') id: string,
     @Body() updateCharacterDto: UpdateCharacterDto,
@@ -51,12 +51,11 @@ export class CharactersController {
   ) {
     if (!user.admin) {
       throw new UnauthorizedException('Droits admin nécessaires');
-    }
-    return this.charactersService.update(+id, updateCharacterDto);
+    } else return this.charactersService.update(+id, updateCharacterDto);
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard())
+  // @UseGuards(AuthGuard('jwt'))
   remove(@Param('id') id: string, @GetUser() user: User) {
     if (!user.admin) {
       throw new UnauthorizedException('Droits admin nécessaires');

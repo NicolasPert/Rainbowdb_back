@@ -16,9 +16,11 @@ import { Movies } from './movies/entities/movie.entity';
 import { Pictures } from './pictures/entities/picture.entity';
 import { Univers } from './univers/entities/univer.entity';
 import { AuthModule } from './auth/auth.module';
+import { PassportModule } from '@nestjs/passport';
 
 @Module({
   imports: [
+    PassportModule.register({ defaultStrategy: 'jwt' }),
     ConfigModule.forRoot({ envFilePath: [`.env`] }),
     TypeOrmModule.forRoot({
       type: 'postgres',
