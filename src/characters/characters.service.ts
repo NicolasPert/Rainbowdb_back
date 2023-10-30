@@ -25,7 +25,9 @@ export class CharactersService {
   async findOne(id: number) {
     const found = await this.characterRepository.findOneBy({ id });
     if (!found) {
-      throw new NotFoundException(`Character with the id ${id} not found`);
+      throw new NotFoundException(
+        `Le personnage avec l'id ${id} n'a pas été trouvé`,
+      );
     }
     return found;
   }
