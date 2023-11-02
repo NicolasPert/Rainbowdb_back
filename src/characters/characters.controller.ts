@@ -26,7 +26,7 @@ export class CharactersController {
     @Body() createCharacterDto: CreateCharacterDto,
     // @GetUser() user: User,
   ) {
-    this.charactersService.create(createCharacterDto);
+    return this.charactersService.create(createCharacterDto);
     // if (!user.admin) {
     //   throw new UnauthorizedException('Droits admin nécéssaires');
     // } else return

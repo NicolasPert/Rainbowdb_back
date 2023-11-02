@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateCharacterDto } from './dto/create-character.dto';
 import { UpdateCharacterDto } from './dto/update-character.dto';
 import { Characters } from './entities/character.entity';
@@ -14,8 +18,16 @@ export class CharactersService {
 
   async create(createCharacterDto: CreateCharacterDto) {
     const character = this.characterRepository.create(createCharacterDto);
-    const result = await this.characterRepository.save(character);
-    return result;
+    console.log(character);
+
+    try {
+      return await this.characterRepository.save(character);
+    } catch (error) {
+      console.error(error);
+      throw new InternalServerErrorException(
+        'Erreur lors de la création du personnage',
+      );
+    }
   }
 
   findAll() {

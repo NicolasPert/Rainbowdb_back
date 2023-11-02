@@ -1,9 +1,14 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { UpdateMovieDto } from './dto/update-movie.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Movies } from './entities/movie.entity';
 import { Repository } from 'typeorm';
+import { validate } from 'class-validator';
 
 @Injectable()
 export class MoviesService {
@@ -12,6 +17,13 @@ export class MoviesService {
     private moviesRepository: Repository<Movies>,
   ) {}
   async createMovies(createMovieDto: CreateMovieDto) {
+    const errors = await validate(createMovieDto);
+
+    if (errors.length > 0) {
+      throw new BadRequestException(errors);
+    }
+
+    // Si la validation est réussie, créez le film
     const movie = this.moviesRepository.create(createMovieDto);
     const result = await this.moviesRepository.save(movie);
     return result;
