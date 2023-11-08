@@ -8,12 +8,16 @@ import { UpdateCharacterDto } from './dto/update-character.dto';
 import { Characters } from './entities/character.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+// import { PicturesService } from 'src/pictures/pictures.service';
+import { Pictures } from 'src/pictures/entities/picture.entity';
 
 @Injectable()
 export class CharactersService {
   constructor(
     @InjectRepository(Characters)
     private characterRepository: Repository<Characters>,
+    @InjectRepository(Pictures)
+    private picturesRepository: Repository<Pictures>,
   ) {}
 
   async create(createCharacterDto: CreateCharacterDto) {
@@ -45,15 +49,38 @@ export class CharactersService {
   }
 
   async update(id: number, updateCharacterDto: UpdateCharacterDto) {
-    const character = await this.findOne(id);
+    const character = await this.characterRepository.findOne({ where: { id } });
 
-    const updateCharacter = this.characterRepository.merge(
-      character,
-      updateCharacterDto,
-    );
+    if (!character) {
+      throw new NotFoundException(`Le character ${id} n'existe pas.`);
+    }
 
-    const result = await this.characterRepository.save(updateCharacter);
-    return result;
+    if (updateCharacterDto.picture) {
+      const idPicture = updateCharacterDto.picture.id;
+      const picture: Pictures = await this.picturesRepository.findOne({
+        where: { id: idPicture },
+      });
+      character.picture = picture;
+    }
+
+    if (updateCharacterDto.name) {
+      character.name = updateCharacterDto.name;
+    }
+
+    if (updateCharacterDto.to_in) {
+      character.to_in = updateCharacterDto.to_in;
+    }
+    if (updateCharacterDto.belong) {
+      character.belong = updateCharacterDto.belong;
+    }
+    if (updateCharacterDto.to_own) {
+      character.to_own = updateCharacterDto.to_own;
+    }
+
+    // Enregistrez les modifications dans la base de données
+    await this.characterRepository.save(character);
+
+    return character;
   }
 
   async remove(id: number) {
@@ -62,3 +89,6 @@ export class CharactersService {
     return response;
   }
 }
+
+// const result = await this.characterRepository.save(updateCharacter);
+// return result;

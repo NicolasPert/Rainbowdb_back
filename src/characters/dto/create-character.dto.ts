@@ -6,5 +6,7 @@ export class CreateCharacterDto {
   name: string;
 
   @IsNotEmpty()
-  id_pictures: number;
+  picture: {
+    id: number;
+  };
 }

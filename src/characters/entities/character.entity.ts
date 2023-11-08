@@ -21,9 +21,6 @@ export class Characters {
   @Column()
   name: string;
 
-  @Column()
-  id_pictures: number;
-
   @ManyToMany(() => Movies, (movies) => movies.name, { eager: true })
   @JoinTable({
     name: 'to_in',
