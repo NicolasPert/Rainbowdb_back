@@ -3,8 +3,9 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 // import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { Characters } from 'src/characters/entities/character.entity';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class UserService {
@@ -25,67 +26,24 @@ export class UserService {
 
   async findOne(id: number) {
     const found = await this.userRepository.findOneBy({ id });
+    console.log('Paramètre id reçu :', id);
     if (!found) {
-      throw new NotFoundException(`Character with the id ${id} not found`);
+      throw new NotFoundException(`User with the id ${id} not found`);
     }
     return found;
   }
 
-  async update(userId: number, characterId: number): Promise<User> {
-    const user = await this.userRepository
-      .createQueryBuilder('user')
-      .leftJoinAndSelect('user.to_likes', 'character')
-      .where('user.id = :userId', { userId })
-      .getOne();
-    console.log(user);
-    if (!user) {
-      throw new NotFoundException(
-        `L'utilisateur avec l'id  ${userId} n'a pas été trouvé`,
-      );
-    }
-    const character = await this.characterRepository.findOne({
-      where: { id: characterId },
-    });
-    if (!character) {
-      throw new NotFoundException(
-        `le character avec l'id  ${characterId} n'a pas été trouvé`,
-      );
+  async update(id: number, updateUserDto: UpdateUserDto) {
+    const users = await this.findOne(id); // ici ça plante !
+    console.log('coucou', id);
+
+    if (users.to_likes) {
+      users.to_likes = updateUserDto.to_likes;
     }
 
-    user.to_likes.push(character);
-    console.log('ceci est mon log', user);
-    return this.userRepository.save(user);
-  }
+    const updatedUser = this.userRepository.merge(users, updateUserDto);
 
-  async delete(userId: number, characterId: number): Promise<User> {
-    const user = await this.userRepository
-      .createQueryBuilder('user')
-      .leftJoinAndSelect('user.to_likes', 'character')
-      .where('user.id = :userId', { userId })
-      .getOne();
-    console.log('kesako', user);
-
-    if (!user) {
-      throw new NotFoundException(
-        `L'utilisateur avec l'ID ${userId} n'a pas été trouvé.`,
-      );
-    }
-
-    // Vérifiez si l'utilisateur a le personnage dans ses favoris
-    const characterIndex = user.to_likes.findIndex(
-      (character) => character.id === characterId,
-    );
-
-    if (characterIndex === -1) {
-      throw new NotFoundException(
-        `Le personnage avec l'ID ${characterId} n'a pas été trouvé dans les favoris de l'utilisateur.`,
-      );
-    }
-
-    // Supprimez le personnage des favoris de l'utilisateur
-    user.to_likes.splice(characterIndex, 1);
-
-    // Enregistrez les modifications dans la base de données
-    return this.userRepository.save(user);
+    const result = await this.userRepository.save(updatedUser);
+    return result;
   }
 }

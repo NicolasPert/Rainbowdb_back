@@ -51,11 +51,11 @@ export class AuthService {
   }
 
   async login(loginDto: LoginDto) {
-    const { username, password } = loginDto;
-    const user = await this.userRepository.findOneBy({ username });
+    const { email, password } = loginDto;
+    const user = await this.userRepository.findOneBy({ email });
 
     if (user && (await bcrypt.compare(password, user.password))) {
-      const payload = { username };
+      const payload = { email };
       const accessToken = await this.jwtService.sign(payload);
       return { accessToken };
     } else {

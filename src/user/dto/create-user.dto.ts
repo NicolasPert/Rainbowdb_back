@@ -31,5 +31,5 @@ export class CreateUserDto {
   @ArrayNotEmpty()
   @IsArray()
   @ValidateNested({ each: true })
-  character?: Characters[];
+  character: Characters[];
 }

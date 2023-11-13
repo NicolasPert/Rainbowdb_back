@@ -1,8 +1,9 @@
-import { Controller, Get, Body, Patch, Param } from '@nestjs/common';
+import { Controller, Get, Body, Patch, Param, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
-// import { CreateUserDto } from './dto/create-user.dto';
-// import { UpdateUserDto } from './dto/update-user.dto';
-// import { FavorisDto } from './dto/favoris.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { GetUser } from 'src/auth/get-user.decorator';
+import { User } from './entities/user.entity';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('user')
 export class UserController {
@@ -18,28 +19,25 @@ export class UserController {
     return this.userService.findAll();
   }
 
+  @Get('current')
+  @UseGuards(AuthGuard())
+  findOne(@GetUser() user: User) {
+    return this.userService.findOne(user.id);
+  }
+
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOneById(@Param('id') id: string) {
     return this.userService.findOne(+id);
   }
 
-  @Patch(':id/favorites')
-  updateFavorites(
+  @Patch(':id')
+  // @UseGuards(AuthGuard())
+  update(
     @Param('id') id: string,
-    @Body() data: { characterId: number; action: 'add' | 'remove' },
+    @Body() updateUserDto: UpdateUserDto,
+    @GetUser() user: User,
   ) {
-    if (data.action === 'add') {
-      //si je mets add et le characterID que je veux cela va mettre le character en favoris sur le user
-      return this.userService.update(+id, data.characterId);
-    } else if (data.action === 'remove') {
-      // si je mets remove et le characterID cela va enlever le favoris sur le user
-      return this.userService.delete(+id, data.characterId);
-    }
-    return 'Action complete'; // Réponse de confirmation
+    console.log(user);
+    return this.userService.update(+id, updateUserDto);
   }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.userService.remove(+id);
-  // }
 }
