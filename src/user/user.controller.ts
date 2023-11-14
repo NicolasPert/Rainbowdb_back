@@ -1,4 +1,12 @@
-import { Controller, Get, Body, Patch, Param, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Body,
+  Patch,
+  Param,
+  UseGuards,
+  NotFoundException,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { GetUser } from 'src/auth/get-user.decorator';
@@ -31,13 +39,13 @@ export class UserController {
   }
 
   @Patch(':id')
-  // @UseGuards(AuthGuard())
-  update(
-    @Param('id') id: string,
-    @Body() updateUserDto: UpdateUserDto,
-    @GetUser() user: User,
-  ) {
-    console.log(user);
+  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    const userToUpdate = await this.userService.findOne(+id);
+
+    if (!userToUpdate) {
+      throw new NotFoundException('User not found');
+    }
+
     return this.userService.update(+id, updateUserDto);
   }
 }
