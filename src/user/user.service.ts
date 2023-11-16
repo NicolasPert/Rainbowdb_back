@@ -35,16 +35,15 @@ export class UserService {
 
   async update(id: number, updateUserDto: UpdateUserDto) {
     const users = await this.findOne(id);
-    // console.log('celui qui faut pas', id);
+    console.log('celui qui faut pas', id);
 
     // if (users.to_likes) {
     users.to_likes = updateUserDto.to_likes;
     // }
 
     const updatedUser = this.userRepository.merge(users, updateUserDto);
-
     const result = await this.userRepository.save(updatedUser);
-    // console.log('celui qui faut pas 2', id);
+    console.log('celui qui faut pas 2', id);
 
     return result;
   }
