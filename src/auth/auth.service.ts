@@ -20,31 +20,38 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
+  // Method for registering a new user
   async register(createAuthDto: CreateAuthDto) {
-    const { username, email, password, admin } = createAuthDto;
+    const { username, email, password, admin } = createAuthDto; // creation of my destructured constant
 
-    // hashage du mot de passe
+    // Hashing the password
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // création d'une entité user
+    // Creating a user entity
     const user = this.userRepository.create({
       username,
       email,
       password: hashedPassword,
-      admin,
+      admin: false,
     });
 
     try {
-      // enregistrement de l'entité user
+      // Saving the user entity to the database
       const createdUser = await this.userRepository.save(user);
+
+      // Removing the password from the response
       delete createdUser.password;
+
+      // Returning the created user
       return createdUser;
     } catch (error) {
-      // gestion des erreurs
+      // Handling errors during registration
       if (error.code === '23505') {
+        // Conflict error if the email already exists in the database
         throw new ConflictException('email already exists');
       } else {
+        // Internal server error for other errors
         throw new InternalServerErrorException();
       }
     }
@@ -60,7 +67,7 @@ export class AuthService {
       return { accessToken };
     } else {
       throw new UnauthorizedException(
-        'Ces identifiants ne sont pas bons, déso...',
+        'These credentials are incorrect, sorry...',
       );
     }
   }

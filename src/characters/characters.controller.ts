@@ -6,29 +6,31 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { CharactersService } from './characters.service';
 import { CreateCharacterDto } from './dto/create-character.dto';
 import { UpdateCharacterDto } from './dto/update-character.dto';
-
-// import { AuthGuard } from '@nestjs/passport';
-// import { GetUser } from 'src/auth/get-user.decorator';
-// import { User } from 'src/user/entities/user.entity';
+import { GetUser } from 'src/auth/get-user.decorator';
+import { AuthGuard } from '@nestjs/passport';
+import { User } from 'src/user/entities/user.entity';
 
 @Controller('characters')
 export class CharactersController {
   constructor(private readonly charactersService: CharactersService) {}
 
   @Post()
-  // @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'))
   create(
     @Body() createCharacterDto: CreateCharacterDto,
-    // @GetUser() user: User,
+    @GetUser() user: User,
   ) {
-    return this.charactersService.create(createCharacterDto);
-    // if (!user.admin) {
-    //   throw new UnauthorizedException('Droits admin nécéssaires');
-    // } else return
+    if (!user.admin) {
+      throw new UnauthorizedException('Droits admin nécéssaires');
+    } else {
+      return this.charactersService.create(createCharacterDto);
+    }
   }
 
   @Get()
