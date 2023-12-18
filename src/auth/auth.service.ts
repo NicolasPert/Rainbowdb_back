@@ -22,7 +22,7 @@ export class AuthService {
 
   // Method for registering a new user
   async register(createAuthDto: CreateAuthDto) {
-    const { username, email, password, admin } = createAuthDto; // creation of my destructured constant
+    const { username, email, password } = createAuthDto; // creation of my destructured constant
 
     // Hashing the password
     const salt = await bcrypt.genSalt();
