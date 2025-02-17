@@ -44,26 +44,23 @@ export class CharactersController {
   }
 
   @Patch(':id')
-  // @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'))
   update(
     @Param('id') id: string,
     @Body() updateCharacterDto: UpdateCharacterDto,
-    // @GetUser() user: User,
+    @GetUser() user: User,
   ) {
-    // if (!user.admin) {
-    //   throw new UnauthorizedException('Droits admin nécessaires');
-    // } else
-
-    return this.charactersService.update(+id, updateCharacterDto);
+    if (!user.admin) {
+      throw new UnauthorizedException('Droits admin nécessaires');
+    } else return this.charactersService.update(+id, updateCharacterDto);
   }
 
   @Delete(':id')
-  // @UseGuards(AuthGuard('jwt'))
-  remove(@Param('id') id: string) {
-    // if (!user.admin) {
-    //   throw new UnauthorizedException('Droits admin nécessaires');
-    // }
+  @UseGuards(AuthGuard('jwt'))
+  remove(@Param('id') id: string, @GetUser() user: User) {
+    if (!user.admin) {
+      throw new UnauthorizedException('Droits admin nécessaires');
+    }
     return this.charactersService.remove(+id);
   }
 }
-// @GetUser() user: User
